@@ -63,8 +63,6 @@ public class MainActivity extends Activity {
             Log.i(TAG, s);
           }
         });
-        InputStream in = getResources().openRawResource(R.raw.effects);
-        IoUtils.extractZipResource(in, getCacheDir());
         File pdFile = IoUtils.find(getCacheDir(), "effects.pd").get(0);
         Log.i(TAG, "pdFile: " + pdFile);
         PdBase.openPatch(pdFile);
@@ -83,6 +81,13 @@ public class MainActivity extends Activity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     bindService(new Intent("IPatchbayService"), connection, Context.BIND_AUTO_CREATE);
+    InputStream in = getResources().openRawResource(R.raw.effects);
+    try {
+      IoUtils.extractZipResource(in, getCacheDir());
+    } catch (IOException e) {
+      e.printStackTrace();
+      finish();
+    }
   }
 
   @Override
