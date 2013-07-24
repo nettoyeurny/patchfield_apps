@@ -3,7 +3,6 @@ package com.noisepages.nettoyeur.pdeffectsrack;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 import org.puredata.core.PdBase;
 import org.puredata.core.utils.IoUtils;
@@ -11,6 +10,7 @@ import org.puredata.core.utils.PdDispatcher;
 
 import android.app.Activity;
 import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -45,9 +45,13 @@ public class MainActivity extends Activity {
       patchbay = IPatchbayService.Stub.asInterface(service);
       int inputChannels = 2;
       int outputChannels = 2;
+      PendingIntent pi =
+          PendingIntent.getActivity(MainActivity.this, 0, new Intent(MainActivity.this,
+              MainActivity.class), 0);
       Notification notification = new Notification.Builder(MainActivity.this)
           .setSmallIcon(R.drawable.pd_icon)
           .setContentTitle("PdModule")
+          .setContentIntent(pi)
           .build();
       try {
         // Create PdModule instance before invoking any methods on PdBase.
