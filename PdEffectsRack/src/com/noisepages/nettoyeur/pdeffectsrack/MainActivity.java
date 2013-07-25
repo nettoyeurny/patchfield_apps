@@ -20,18 +20,21 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 import android.view.Menu;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 
 import com.noisepages.nettoyeur.patchbay.IPatchbayService;
 import com.noisepages.nettoyeur.patchbay.pd.PdModule;
 
 public class MainActivity extends Activity {
 
-  private static final String TAG = "PatchbayPdSample";
+  private static final String TAG = "PdEffectsRack";
 
   private IPatchbayService patchbay = null;
 
+  private final String label = "PdEffectsRack";
   private PdModule module = null;
-  private final String label = "pdtest";
+  private int patch = -1;
 
   private ServiceConnection connection = new ServiceConnection() {
     @Override
@@ -50,7 +53,7 @@ public class MainActivity extends Activity {
               MainActivity.class), 0);
       Notification notification = new Notification.Builder(MainActivity.this)
           .setSmallIcon(R.drawable.pd_icon)
-          .setContentTitle("PdModule")
+          .setContentTitle("PdEffectsRack")
           .setContentIntent(pi)
           .build();
       try {
@@ -65,7 +68,7 @@ public class MainActivity extends Activity {
         });
         File pdFile = IoUtils.find(getCacheDir(), "effects.pd").get(0);
         Log.i(TAG, "pdFile: " + pdFile);
-        PdBase.openPatch(pdFile);
+        patch = PdBase.openPatch(pdFile);
         module.configure(patchbay, label);
         patchbay.activateModule(label);
       } catch (RemoteException e) {
@@ -80,6 +83,56 @@ public class MainActivity extends Activity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+    SeekBar durationBar = (SeekBar) findViewById(R.id.durationBar);
+    durationBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+      @Override public void onStopTrackingTouch(SeekBar seekBar) {}
+      @Override public void onStartTrackingTouch(SeekBar seekBar) {}
+      
+      @Override
+      public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        PdBase.sendMessage("params", "basedur", 10 * progress);
+      }
+    });
+    SeekBar feedbackBar = (SeekBar) findViewById(R.id.feedbackBar);
+    feedbackBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+      @Override public void onStopTrackingTouch(SeekBar seekBar) {}
+      @Override public void onStartTrackingTouch(SeekBar seekBar) {}
+      
+      @Override
+      public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        PdBase.sendMessage("params", "feedback", 0.0098 * progress);
+      }
+    });
+    SeekBar bpqBar = (SeekBar) findViewById(R.id.bpqBar);
+    bpqBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+      @Override public void onStopTrackingTouch(SeekBar seekBar) {}
+      @Override public void onStartTrackingTouch(SeekBar seekBar) {}
+      
+      @Override
+      public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        PdBase.sendMessage("params", "bq", 0.2 * progress);
+      }
+    });
+    SeekBar bpfBar = (SeekBar) findViewById(R.id.bpfBar);
+    bpfBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+      @Override public void onStopTrackingTouch(SeekBar seekBar) {}
+      @Override public void onStartTrackingTouch(SeekBar seekBar) {}
+      
+      @Override
+      public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        PdBase.sendMessage("params", "bpitch", 1.27 * progress);
+      }
+    });
+    SeekBar dryBar = (SeekBar) findViewById(R.id.dryBar);
+    dryBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+      @Override public void onStopTrackingTouch(SeekBar seekBar) {}
+      @Override public void onStartTrackingTouch(SeekBar seekBar) {}
+      
+      @Override
+      public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        PdBase.sendMessage("params", "dry", 0.01 * progress);
+      }
+    });
     bindService(new Intent("IPatchbayService"), connection, Context.BIND_AUTO_CREATE);
     InputStream in = getResources().openRawResource(R.raw.effects);
     try {
@@ -99,6 +152,9 @@ public class MainActivity extends Activity {
       } catch (RemoteException e) {
         e.printStackTrace();
       }
+    }
+    if (patch >= 0) {
+      PdBase.closePatch(patch);
     }
     PdBase.release();
     unbindService(connection);
