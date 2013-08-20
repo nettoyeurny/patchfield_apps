@@ -23,14 +23,14 @@ import android.view.Menu;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
-import com.noisepages.nettoyeur.patchbay.IPatchbayService;
-import com.noisepages.nettoyeur.patchbay.pd.PdModule;
+import com.noisepages.nettoyeur.patchfield.IPatchFieldService;
+import com.noisepages.nettoyeur.patchfield.pd.PdModule;
 
 public class MainActivity extends Activity {
 
   private static final String TAG = "PdEffectsRack";
 
-  private IPatchbayService patchbay = null;
+  private IPatchFieldService patchfield = null;
 
   private final String label = "PdEffectsRack";
   private PdModule module = null;
@@ -39,13 +39,13 @@ public class MainActivity extends Activity {
   private ServiceConnection connection = new ServiceConnection() {
     @Override
     public void onServiceDisconnected(ComponentName name) {
-      patchbay = null;
+      patchfield = null;
     }
 
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
       Log.i(TAG, "Service connected.");
-      patchbay = IPatchbayService.Stub.asInterface(service);
+      patchfield = IPatchFieldService.Stub.asInterface(service);
       int inputChannels = 2;
       int outputChannels = 2;
       PendingIntent pi =
@@ -59,7 +59,7 @@ public class MainActivity extends Activity {
       try {
         // Create PdModule instance before invoking any methods on PdBase.
         module =
-            PdModule.getInstance(patchbay.getSampleRate(), inputChannels, outputChannels, notification);
+            PdModule.getInstance(patchfield.getSampleRate(), inputChannels, outputChannels, notification);
         PdBase.setReceiver(new PdDispatcher() {
           @Override
           public void print(String s) {
@@ -69,8 +69,8 @@ public class MainActivity extends Activity {
         File pdFile = IoUtils.find(getCacheDir(), "effects.pd").get(0);
         Log.i(TAG, "pdFile: " + pdFile);
         patch = PdBase.openPatch(pdFile);
-        module.configure(patchbay, label);
-        patchbay.activateModule(label);
+        module.configure(patchfield, label);
+        patchfield.activateModule(label);
       } catch (RemoteException e) {
         e.printStackTrace();
       } catch (IOException e) {
@@ -133,7 +133,7 @@ public class MainActivity extends Activity {
         PdBase.sendMessage("params", "dry", 0.01 * progress);
       }
     });
-    bindService(new Intent("IPatchbayService"), connection, Context.BIND_AUTO_CREATE);
+    bindService(new Intent("IPatchFieldService"), connection, Context.BIND_AUTO_CREATE);
     InputStream in = getResources().openRawResource(R.raw.effects);
     try {
       IoUtils.extractZipResource(in, getCacheDir());
@@ -146,9 +146,9 @@ public class MainActivity extends Activity {
   @Override
   protected void onDestroy() {
     super.onDestroy();
-    if (patchbay != null) {
+    if (patchfield != null) {
       try {
-        module.release(patchbay);
+        module.release(patchfield);
       } catch (RemoteException e) {
         e.printStackTrace();
       }
