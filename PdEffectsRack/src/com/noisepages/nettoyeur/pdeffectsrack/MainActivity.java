@@ -23,14 +23,14 @@ import android.view.Menu;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
-import com.noisepages.nettoyeur.patchfield.IPatchFieldService;
+import com.noisepages.nettoyeur.patchfield.IPatchfieldService;
 import com.noisepages.nettoyeur.patchfield.pd.PdModule;
 
 public class MainActivity extends Activity {
 
   private static final String TAG = "PdEffectsRack";
 
-  private IPatchFieldService patchfield = null;
+  private IPatchfieldService patchfield = null;
 
   private final String label = "PdEffectsRack";
   private PdModule module = null;
@@ -45,7 +45,7 @@ public class MainActivity extends Activity {
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
       Log.i(TAG, "Service connected.");
-      patchfield = IPatchFieldService.Stub.asInterface(service);
+      patchfield = IPatchfieldService.Stub.asInterface(service);
       int inputChannels = 2;
       int outputChannels = 2;
       PendingIntent pi =
