@@ -133,7 +133,7 @@ public class MainActivity extends Activity {
         PdBase.sendMessage("params", "dry", 0.01 * progress);
       }
     });
-    bindService(new Intent("IPatchFieldService"), connection, Context.BIND_AUTO_CREATE);
+    bindService(new Intent("IPatchfieldService"), connection, Context.BIND_AUTO_CREATE);
     InputStream in = getResources().openRawResource(R.raw.effects);
     try {
       IoUtils.extractZipResource(in, getCacheDir());
