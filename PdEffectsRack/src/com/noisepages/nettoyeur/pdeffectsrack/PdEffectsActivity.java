@@ -26,7 +26,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import com.noisepages.nettoyeur.patchfield.IPatchfieldService;
 import com.noisepages.nettoyeur.patchfield.pd.PdModule;
 
-public class MainActivity extends Activity {
+public class PdEffectsActivity extends Activity {
 
   private static final String TAG = "PdEffectsRack";
 
@@ -49,9 +49,9 @@ public class MainActivity extends Activity {
       int inputChannels = 2;
       int outputChannels = 2;
       PendingIntent pi =
-          PendingIntent.getActivity(MainActivity.this, 0, new Intent(MainActivity.this,
-              MainActivity.class), 0);
-      Notification notification = new Notification.Builder(MainActivity.this)
+          PendingIntent.getActivity(PdEffectsActivity.this, 0, new Intent(PdEffectsActivity.this,
+              PdEffectsActivity.class), 0);
+      Notification notification = new Notification.Builder(PdEffectsActivity.this)
           .setSmallIcon(R.drawable.pd_icon)
           .setContentTitle("PdEffectsRack")
           .setContentIntent(pi)
