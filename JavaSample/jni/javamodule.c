@@ -78,7 +78,7 @@ JNIEXPORT void JNICALL
 Java_com_noisepages_nettoyeur_patchfield_java_JavaModule_fillInputBuffer
 (JNIEnv *env, jobject obj, jlong p, jfloatArray buffer) {
   jmodule *jm = (jmodule *) p;
-  sem_post(&jm->wake);
+  sem_wait(&jm->wake);
   if (!jm->done) {
     int n = (*env)->GetArrayLength(env, buffer);
     float *b = (*env)->GetFloatArrayElements(env, buffer, NULL);
