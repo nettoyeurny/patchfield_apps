@@ -19,14 +19,13 @@ import android.app.Notification;
 import com.noisepages.nettoyeur.patchfield.AudioModule;
 
 /**
- * An audio module subclass whose audio processing callback is to be implemented
- * in Java (as opposed to native code).
+ * An audio module subclass whose audio processing callback is to be implemented in Java (as opposed
+ * to native code).
  * 
- * THIS IS NOT THE RECOMMENDED WAY TO USE PATCHFIELD. The Java processing callback
- * cannot be invoked on a real-time thread and Java code is prone to garbage
- * collection breaks. This means that instances of this class run a higher risk
- * of missing their deadlines and causing dropouts than audio modules that do
- * their processing natively. Use this class for quick-and-dirty prototypes,
+ * THIS IS NOT THE RECOMMENDED WAY TO USE PATCHFIELD. The Java processing callback cannot be invoked
+ * on a real-time thread and Java code is prone to garbage collection breaks. This means that
+ * instances of this class run a higher risk of missing their deadlines and causing dropouts than
+ * audio modules that do their processing natively. Use this class for quick-and-dirty prototypes,
  * but not for any serious applications that require glitch-free performance.
  */
 public abstract class JavaModule extends AudioModule {
@@ -60,11 +59,11 @@ public abstract class JavaModule extends AudioModule {
   };
 
   /**
-   * Constructor. For best performance, make the buffer size equal to Patchfield.getBufferSize(). When
-   * this is not an option, choose a smallish buffer size if possible (64 is a good value). Large
-   * buffers will not improve stability. In fact, large buffers may increase the risk of dropouts
-   * because the patchfield runs a fixed buffer size internally; mismatched buffer sizes place an
-   * uneven load on the internal processing callback.
+   * Constructor. For best performance, make the buffer size equal to Patchfield.getBufferSize().
+   * When this is not an option, choose a smallish buffer size if possible (64 is a good value).
+   * Large buffers will not improve stability. In fact, large buffers may increase the risk of
+   * dropouts because the patchfield runs a fixed buffer size internally; mismatched buffer sizes
+   * place an uneven load on the internal processing callback.
    */
   public JavaModule(int bufferSize, int inputChannels, int outputChannels, Notification notification) {
     super(notification);

@@ -2,3 +2,4 @@
 
 all:
 	make -C JavaSample
+	make -C PatchfieldCsound

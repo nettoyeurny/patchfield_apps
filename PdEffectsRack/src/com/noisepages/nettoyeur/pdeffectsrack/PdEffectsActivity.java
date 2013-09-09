@@ -51,15 +51,14 @@ public class PdEffectsActivity extends Activity {
       PendingIntent pi =
           PendingIntent.getActivity(PdEffectsActivity.this, 0, new Intent(PdEffectsActivity.this,
               PdEffectsActivity.class), 0);
-      Notification notification = new Notification.Builder(PdEffectsActivity.this)
-          .setSmallIcon(R.drawable.pd_icon)
-          .setContentTitle("PdEffectsRack")
-          .setContentIntent(pi)
-          .build();
+      Notification notification =
+          new Notification.Builder(PdEffectsActivity.this).setSmallIcon(R.drawable.pd_icon)
+              .setContentTitle("PdEffectsRack").setContentIntent(pi).build();
       try {
         // Create PdModule instance before invoking any methods on PdBase.
         module =
-            PdModule.getInstance(patchfield.getSampleRate(), inputChannels, outputChannels, notification);
+            PdModule.getInstance(patchfield.getSampleRate(), inputChannels, outputChannels,
+                notification);
         PdBase.setReceiver(new PdDispatcher() {
           @Override
           public void print(String s) {
@@ -85,9 +84,12 @@ public class PdEffectsActivity extends Activity {
     setContentView(R.layout.activity_main);
     SeekBar durationBar = (SeekBar) findViewById(R.id.durationBar);
     durationBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-      @Override public void onStopTrackingTouch(SeekBar seekBar) {}
-      @Override public void onStartTrackingTouch(SeekBar seekBar) {}
-      
+      @Override
+      public void onStopTrackingTouch(SeekBar seekBar) {}
+
+      @Override
+      public void onStartTrackingTouch(SeekBar seekBar) {}
+
       @Override
       public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         PdBase.sendMessage("params", "basedur", 10 * progress);
@@ -95,9 +97,12 @@ public class PdEffectsActivity extends Activity {
     });
     SeekBar feedbackBar = (SeekBar) findViewById(R.id.feedbackBar);
     feedbackBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-      @Override public void onStopTrackingTouch(SeekBar seekBar) {}
-      @Override public void onStartTrackingTouch(SeekBar seekBar) {}
-      
+      @Override
+      public void onStopTrackingTouch(SeekBar seekBar) {}
+
+      @Override
+      public void onStartTrackingTouch(SeekBar seekBar) {}
+
       @Override
       public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         PdBase.sendMessage("params", "feedback", 0.0098 * progress);
@@ -105,9 +110,12 @@ public class PdEffectsActivity extends Activity {
     });
     SeekBar bpqBar = (SeekBar) findViewById(R.id.bpqBar);
     bpqBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-      @Override public void onStopTrackingTouch(SeekBar seekBar) {}
-      @Override public void onStartTrackingTouch(SeekBar seekBar) {}
-      
+      @Override
+      public void onStopTrackingTouch(SeekBar seekBar) {}
+
+      @Override
+      public void onStartTrackingTouch(SeekBar seekBar) {}
+
       @Override
       public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         PdBase.sendMessage("params", "bq", 0.2 * progress);
@@ -115,9 +123,12 @@ public class PdEffectsActivity extends Activity {
     });
     SeekBar bpfBar = (SeekBar) findViewById(R.id.bpfBar);
     bpfBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-      @Override public void onStopTrackingTouch(SeekBar seekBar) {}
-      @Override public void onStartTrackingTouch(SeekBar seekBar) {}
-      
+      @Override
+      public void onStopTrackingTouch(SeekBar seekBar) {}
+
+      @Override
+      public void onStartTrackingTouch(SeekBar seekBar) {}
+
       @Override
       public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         PdBase.sendMessage("params", "bpitch", 1.27 * progress);
@@ -125,9 +136,12 @@ public class PdEffectsActivity extends Activity {
     });
     SeekBar dryBar = (SeekBar) findViewById(R.id.dryBar);
     dryBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-      @Override public void onStopTrackingTouch(SeekBar seekBar) {}
-      @Override public void onStartTrackingTouch(SeekBar seekBar) {}
-      
+      @Override
+      public void onStopTrackingTouch(SeekBar seekBar) {}
+
+      @Override
+      public void onStartTrackingTouch(SeekBar seekBar) {}
+
       @Override
       public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         PdBase.sendMessage("params", "dry", 0.01 * progress);
