@@ -14,68 +14,27 @@
 
 package com.noisepages.nettoyeur.patchfield.java;
 
-import android.app.Activity;
-import android.content.ComponentName;
-import android.content.Context;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.os.RemoteException;
-import android.util.Log;
-import android.view.Menu;
 
-import com.noisepages.nettoyeur.patchfield.IPatchfieldService;
+import com.noisepages.nettoyeur.patchfield.PatchfieldActivity;
 
-public class JavaModuleActivity extends Activity {
-
-  private static final String TAG = "JavaSample";
-
-  private IPatchfieldService patchfield = null;
+public class JavaModuleActivity extends PatchfieldActivity {
 
   private JavaModule module = null;
-
   private final String moduleLabel = "java";
-
-  private ServiceConnection connection = new ServiceConnection() {
-    @Override
-    public void onServiceDisconnected(ComponentName name) {
-      patchfield = null;
-    }
-
-    @Override
-    public void onServiceConnected(ComponentName name, IBinder service) {
-      Log.i(TAG, "Service connected.");
-      patchfield = IPatchfieldService.Stub.asInterface(service);
-      try {
-        Log.i(TAG, "Creating runner.");
-        module = new JavaModule(64, 2, 2, null) {
-          @Override
-          protected void process(int sampleRate, int bufferSize, int inputChannels,
-              float[] inputBuffer, int outputChannels, float[] outputBuffer) {
-            // Switch channels.
-            System.arraycopy(inputBuffer, 0, outputBuffer, bufferSize, bufferSize);
-            System.arraycopy(inputBuffer, bufferSize, outputBuffer, 0, bufferSize);
-          }
-        };
-        module.configure(patchfield, moduleLabel);
-        patchfield.activateModule(moduleLabel);
-      } catch (RemoteException e) {
-        e.printStackTrace();
-      }
-    }
-  };
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-    bindService(new Intent("IPatchfieldService"), connection, Context.BIND_AUTO_CREATE);
   }
 
   @Override
   protected void onDestroy() {
-    super.onDestroy();
     if (patchfield != null) {
       try {
         module.release(patchfield);
@@ -83,13 +42,37 @@ public class JavaModuleActivity extends Activity {
         e.printStackTrace();
       }
     }
-    unbindService(connection);
+    super.onDestroy();
   }
 
   @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
-    // Inflate the menu; this adds items to the action bar if it is present.
-    getMenuInflater().inflate(R.menu.main, menu);
-    return true;
+  protected void onPatchfieldConnected() {
+    try {
+      PendingIntent pi = PendingIntent.getActivity(
+          JavaModuleActivity.this, 0, new Intent(
+              JavaModuleActivity.this,
+              JavaModuleActivity.class), 0);
+      Notification notification = new Notification.Builder(JavaModuleActivity.this)
+          .setSmallIcon(R.drawable.emo_im_happy)
+          .setContentTitle("JavaModule").setContentIntent(pi).build();
+      module = new JavaModule(64, 2, 2, notification) {
+        @Override
+        protected void process(int sampleRate, int bufferSize, int inputChannels,
+            float[] inputBuffer, int outputChannels, float[] outputBuffer) {
+          // Switch channels, just to show that we're doing something here.
+          System.arraycopy(inputBuffer, 0, outputBuffer, bufferSize, bufferSize);
+          System.arraycopy(inputBuffer, bufferSize, outputBuffer, 0, bufferSize);
+        }
+      };
+      module.configure(patchfield, moduleLabel);
+      patchfield.activateModule(moduleLabel);
+    } catch (RemoteException e) {
+        e.printStackTrace();
+    }
+  }
+
+  @Override
+  protected void onPatchfieldDisconnected() {
+    // Do nothing.
   }
 }
